@@ -67,7 +67,7 @@ class Converter(object):
         # Get the number of file rows
         self.logger.info("start scanning file lines")
         start_time = time.time()
-        with open(self.file_path) as file:
+        with open(self.file_path, encoding='UTF-8') as file:
             self.file_rows = 0
             for _ in file:
                 self.file_rows += 1
@@ -94,7 +94,7 @@ class Converter(object):
                     pass
                 finally:
                     self.handle_total += 1
-                bool hasPhone = False
+                hasPhone = False
                 for phone_number in phones:
                     if phone_number != '\\\\N':
                         hasPhone = True
