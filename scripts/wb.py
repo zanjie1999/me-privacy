@@ -6,8 +6,9 @@ import threading
 import time
 
 
-class Converter(object):
-    def __init__(self, database_path, file_path):
+class Scanner:
+
+    def __init__(self, database_name, file_name):
         logging.basicConfig(
             level=logging.DEBUG,
             format="%(asctime)s %(levelname)s %(message)s",
@@ -15,8 +16,8 @@ class Converter(object):
         )
         self.logger = logging.getLogger()
         self.database_connection = None
-        self.database_path = database_path
-        self.file_path = file_path
+        self.database_name = database_name
+        self.file_name = file_name
         self.file_rows = 0
         self.handle_total = 0
         self.handle_invalid = 0
@@ -24,24 +25,20 @@ class Converter(object):
         self.cancel_print_insertion_speed = None
 
     def connect_database(self):
-        self.database_connection = sqlite3.connect(self.database_path)
+        self.database_connection = sqlite3.connect(self.database_name)
 
     def close_database(self):
         self.database_connection.close()
 
-    def insert(self, id, name, nickname, password, email, id_number, phone_number):
+    def insert_uid_and_phone(self, id, uid, phone):
         cursor = self.database_connection.cursor()
         try:
-            cursor.execute(
-                "INSERT INTO jd VALUES (?, ?, ?, ?, ?, ?, ?);",
-                (id, name, nickname, password, email, id_number, phone_number)
-            )
+            cursor.execute("INSERT INTO wb VALUES (?, ?, ?);", (id, uid, phone))
         except sqlite3.IntegrityError:
             self.handle_invalid += 1
         finally:
             self.handle_total += 1
             self.handle_queue += 1
-        pass
 
     def start_insertion_speed(self):
         event = threading.Event()
@@ -67,7 +64,7 @@ class Converter(object):
         # Get the number of file rows
         self.logger.info("start scanning file lines")
         start_time = time.time()
-        with open(self.file_path) as file:
+        with open(self.file_name) as file:
             self.file_rows = 0
             for _ in file:
                 self.file_rows += 1
@@ -76,31 +73,19 @@ class Converter(object):
             self.file_rows,
             end_time - start_time,
         ))
-        # Insert Jd
+        # Insert Weibo uid and phone numbers
         self.connect_database()
         self.cancel_print_insertion_speed = self.start_insertion_speed()
-        with open(self.file_path, encoding='UTF-8') as file:
+        with open(self.file_name) as file:
             for line in file:
-                try:
-                    dataset = line.strip().split("---")
-                    name = dataset[0]
-                    nickname = dataset[1]
-                    password = dataset[2]
-                    email = dataset[3]
-                    id_number = dataset[4]
-                    phones = dataset[5:]
-                except IndexError:
+                data = line.strip().split("\t")
+                if len(data) < 2:
                     self.handle_invalid += 1
-                    pass
-                finally:
                     self.handle_total += 1
-                bool hasPhone = False
-                for phone_number in phones:
-                    if phone_number != '\\\\N':
-                        hasPhone = True
-                        self.insert(self.handle_total, name, nickname, password, email, id_number, phone_number)
-                if not hasPhone:
-                    self.insert(self.handle_total, name, nickname, password, email, id_number, '\\\\N')
+                    continue
+                phone = data[0]
+                uid = data[1]:
+                self.insert_uid_and_phone(self.handle_total, uid, phone)
                 if self.handle_queue >= 400000:
                     self.database_connection.commit()
                     self.handle_queue = 0
@@ -115,5 +100,5 @@ class Converter(object):
 
 
 if __name__ == '__main__':
-    converter = Converter("database/database.db", "source/www_jd_com_12g.txt")
-    converter.start()
+    scanner = Scanner("database/database.db", "../../微博五亿2019.txt")
+    scanner.start()
