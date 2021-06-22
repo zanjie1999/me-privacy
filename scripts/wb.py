@@ -64,7 +64,7 @@ class Scanner:
         # Get the number of file rows
         self.logger.info("start scanning file lines")
         start_time = time.time()
-        with open(self.file_name) as file:
+        with open(self.file_name, encoding='UTF-8') as file:
             self.file_rows = 0
             for _ in file:
                 self.file_rows += 1
@@ -76,7 +76,7 @@ class Scanner:
         # Insert Weibo uid and phone numbers
         self.connect_database()
         self.cancel_print_insertion_speed = self.start_insertion_speed()
-        with open(self.file_name) as file:
+        with open(self.file_name, encoding='UTF-8') as file:
             for line in file:
                 data = line.strip().split("\t")
                 if len(data) < 2:
@@ -84,7 +84,7 @@ class Scanner:
                     self.handle_total += 1
                     continue
                 phone = data[0]
-                uid = data[1]:
+                uid = data[1]
                 self.insert_uid_and_phone(self.handle_total, uid, phone)
                 if self.handle_queue >= 400000:
                     self.database_connection.commit()
