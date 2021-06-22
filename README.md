@@ -1,8 +1,10 @@
-# Privacy
+# 咩Privacy
 
-![GitHub last commit](https://img.shields.io/github/last-commit/kallydev/privacy?style=flat-square)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/kallydev/privacy?style=flat-square)
-![GitHub license](https://img.shields.io/github/license/kallydev/privacy?style=flat-square)
+这是一个经过咩维护的全新版本
+
+![GitHub last commit](https://img.shields.io/github/last-commit/zanjie1999/me-privacy?style=flat-square)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/zanjie1999/me-privacy?style=flat-square)
+![GitHub license](https://img.shields.io/github/license/zanjie1999/me-privacy?style=flat-square)
 
 个人数据泄漏检测网站，适用于近期流传的 40GB+ 数据。
 
