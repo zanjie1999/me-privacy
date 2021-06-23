@@ -23,3 +23,10 @@ CREATE TABLE IF NOT EXISTS sf
     phone_number INT,
     address      TEXT
 );
+
+CREATE TABLE IF NOT EXISTS wb
+(
+    id           BIGINT,
+    uid_number    BIGINT,
+    phone_number INT
+);
